@@ -1,0 +1,9 @@
+pool,type,carousel_group,file,alt,captions,audio,poster
+MEMORIES,photo,,media/photos/ejemplo-asado.jpg,El asado de 2019,FRASE UNO|FRASE DOS,,
+MEMORIES,photo,,media/photos/ejemplo-sin-frase.jpg,Foto sin frase fija,,,
+MEMORIES,photo,,media/photos/ejemplo-con-audio.jpg,Foto con audio,DALE PLAY,media/audio/ejemplo.mp3,
+MEMORIES,video,,media/videos/ejemplo-recital.mp4,,,,media/videos/ejemplo-recital-poster.jpg
+MEMORIES,photo,carrusel1,media/carousel/carrusel1-1.jpg,Primera foto del carrusel,CAPITULO UNO,,
+MEMORIES,photo,carrusel1,media/carousel/carrusel1-2.jpg,Segunda foto del carrusel,CAPITULO DOS,,
+MEMORIES,video,carrusel1,media/carousel/carrusel1-3.mp4,,,,
+FIRST_VISIT,photo,,media/photos/ejemplo-bienvenida.jpg,Bienvenida de primera visita,FELIZ CUMPLE|ESTO APENAS EMPIEZA,,

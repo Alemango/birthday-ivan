@@ -1,0 +1,558 @@
+/* ==========================================================================
+   Solo de Guitarra — El Feeling — Edición Amigo
+   Estética "reels" full-bleed. Paleta de escenario + latón + madera.
+   ========================================================================== */
+
+@font-face {
+  /* Fuente display condensada tipo cartel de concierto, vía Google Fonts
+     (Oswald). Si no hay red, cae a las alternativas del stack. */
+  font-family: 'Oswald';
+  src: local('Oswald');
+}
+
+:root {
+  /* Paleta */
+  --c-stage-black: #15120f;
+  --c-brass: #c9a227;
+  --c-brass-light: #e8c766;
+  --c-wood: #4a2e1f;
+  --c-cream: #ede6d6;
+  --c-paper: #f5f1e8;
+
+  --font-display: 'Oswald', 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Courier New', monospace;
+  --font-meme: 'Anton', 'Archivo Black', Impact, sans-serif;
+
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --plate-height: 84px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--c-stage-black);
+  color: var(--c-cream);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  height: 100vh; /* fallback */
+  overflow: hidden;
+  background: var(--c-stage-black);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Viewer principal: foto / video / carrusel full-bleed                    */
+/* ---------------------------------------------------------------------- */
+
+#viewer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--c-stage-black);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity .35s ease;
+  pointer-events: none;
+}
+
+.slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slide img,
+.slide video,
+.carousel-item img,
+.carousel-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  background: var(--c-stage-black);
+  /* evita el drag nativo de imágenes y el callout de iOS, que si no
+     se comen el gesto de swipe del carrusel */
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Fotos horizontales: se muestran recortadas (cover) en vertical, con un  */
+/* aviso para girar el teléfono; en horizontal pasan a verse completas     */
+/* (contain) sobre un fondo borroso de la misma foto.                     */
+/* ---------------------------------------------------------------------- */
+
+.media-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(28px) brightness(.6);
+  transform: scale(1.15);
+  display: none;
+}
+
+.is-landscape img,
+.is-landscape video,
+.is-square img,
+.is-square video {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cuadradas: se adaptan sin recorte sin importar la orientación del
+   teléfono (a diferencia de .is-landscape, no depende de @media
+   orientation ni muestra el aviso de rotar). */
+.is-square img,
+.is-square video {
+  object-fit: contain;
+}
+
+.is-square .media-bg {
+  display: block;
+}
+
+.rotate-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  color: var(--c-paper);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+  animation: hint-pulse 2s ease-in-out infinite;
+}
+
+.rotate-hint svg {
+  width: 34px;
+  height: 34px;
+  animation: rotate-hint-spin 2.4s ease-in-out infinite;
+}
+
+.rotate-hint span {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0 12%;
+}
+
+@keyframes rotate-hint-spin {
+  0%, 20% { transform: rotate(0deg); }
+  50%, 70% { transform: rotate(90deg); }
+  100% { transform: rotate(90deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotate-hint { animation: none; opacity: 0.85; }
+  .rotate-hint svg { animation: none; }
+}
+
+@media (orientation: landscape) {
+  .slide.is-landscape img,
+  .slide.is-landscape video,
+  .carousel-item.is-landscape img,
+  .carousel-item.is-landscape video {
+    object-fit: contain;
+  }
+
+  .is-landscape .media-bg {
+    display: block;
+  }
+
+  .is-landscape .rotate-hint {
+    display: none;
+  }
+}
+
+/* Frase tipo meme sobre fotos: blanco con contorno negro, SOLO en fotos */
+.meme-caption {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 10%;
+  text-align: center;
+  font-family: var(--font-meme);
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: clamp(1.6rem, 7vw, 2.6rem);
+  line-height: 1.15;
+  -webkit-text-stroke: 2.5px #000;
+  paint-order: stroke fill;
+  text-shadow:
+    3px 3px 0 #000,
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Carrusel                                                                */
+/* ---------------------------------------------------------------------- */
+
+.carousel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  will-change: transform;
+}
+
+.carousel-track.is-dragging {
+  transition: none;
+}
+
+.carousel-track:not(.is-dragging) {
+  transition: transform .3s ease;
+}
+
+.carousel-item {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-indicator {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.carousel-count {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  right: 16px;
+  z-index: 4;
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  letter-spacing: .05em;
+  color: var(--c-paper);
+  background: rgba(21, 18, 15, 0.55);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 39, 0.5);
+}
+
+.carousel-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(245, 241, 232, 0.35);
+  border: 1px solid rgba(21, 18, 15, 0.4);
+  transition: background .2s ease, transform .2s ease;
+}
+
+.carousel-dot.is-active {
+  background: var(--c-brass-light);
+  transform: scale(1.25);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Botón de audio (foto con audio opcional) / botón de sonido de video     */
+/* ---------------------------------------------------------------------- */
+
+.audio-btn,
+.mute-btn {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 18px);
+  left: 18px;
+  z-index: 4;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 199, 102, 0.6);
+  background: rgba(21, 18, 15, 0.55);
+  backdrop-filter: blur(3px);
+  color: var(--c-brass-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.audio-btn svg,
+.mute-btn svg { width: 22px; height: 22px; }
+
+.audio-btn.is-playing {
+  background: linear-gradient(135deg, var(--c-brass-light), var(--c-brass));
+  color: var(--c-stage-black);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Placa inferior tipo trofeo latón/madera                                 */
+/* ---------------------------------------------------------------------- */
+
+.plate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  height: calc(var(--plate-height) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(180deg, rgba(21,18,15,0) 0%, rgba(21,18,15,0.65) 25%, var(--c-wood) 100%),
+    linear-gradient(90deg, #8a6a1f 0%, var(--c-brass-light) 18%, var(--c-brass) 50%, var(--c-brass-light) 82%, #8a6a1f 100%);
+  background-blend-mode: normal;
+  border-top: 1px solid rgba(232, 199, 102, 0.8);
+  box-shadow: 0 -6px 18px rgba(0,0,0,0.45);
+}
+
+.plate::before {
+  /* textura sutil tipo grabado metálico */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    115deg,
+    rgba(255,255,255,0.08) 0px,
+    rgba(255,255,255,0.08) 1px,
+    transparent 1px,
+    transparent 6px
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.plate-label {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: clamp(0.95rem, 4vw, 1.25rem);
+  color: var(--c-stage-black);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.plate-label .plate-number {
+  font-variant-numeric: tabular-nums;
+  margin-left: .35em;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Botón "otro recuerdo" — púa de guitarra                                 */
+/* ---------------------------------------------------------------------- */
+
+.pick-btn {
+  position: absolute;
+  right: 20px;
+  bottom: calc(var(--plate-height) + var(--safe-bottom) + 22px);
+  z-index: 6;
+  width: 74px;
+  height: 88px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  /* forma de púa de guitarra */
+  clip-path: path('M37 2 C60 2 72 26 72 48 C72 72 52 86 37 86 C22 86 2 72 2 48 C2 26 14 2 37 2 Z');
+  background: linear-gradient(160deg, var(--c-brass-light) 0%, var(--c-brass) 55%, #8a6a1f 100%);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5), inset 0 0 12px rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s ease;
+}
+
+.pick-btn:active {
+  transform: scale(0.92);
+}
+
+.pick-btn svg {
+  width: 30px;
+  height: 30px;
+  color: var(--c-stage-black);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pick-btn { transition: none; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Botones flotantes de redes sociales                                     */
+/* ---------------------------------------------------------------------- */
+
+.social-bar {
+  position: absolute;
+  left: 18px;
+  bottom: calc(var(--plate-height) + var(--safe-bottom) + 22px);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.social-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 199, 102, 0.55);
+  background: rgba(21, 18, 15, 0.55);
+  backdrop-filter: blur(3px);
+  color: var(--c-brass-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.social-btn svg { width: 20px; height: 20px; }
+
+/* ---------------------------------------------------------------------- */
+/* Overlay de primera visita — scratch card "envoltorio empañado"          */
+/* ---------------------------------------------------------------------- */
+
+#wrapper-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  touch-action: none;
+}
+
+#wrapper-overlay.is-hidden {
+  display: none;
+}
+
+#wrapper-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  visibility: hidden; /* solo se usa como fuente para el canvas */
+}
+
+#wrapper-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#wrapper-canvas.is-fading {
+  transition: opacity .9s ease;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #wrapper-canvas.is-fading {
+    transition: opacity .25s linear;
+  }
+}
+
+.wrapper-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14%;
+  z-index: 21;
+  text-align: center;
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 1rem;
+  color: var(--c-paper);
+  pointer-events: none;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+  animation: hint-pulse 2s ease-in-out infinite;
+}
+
+@keyframes hint-pulse {
+  0%, 100% { opacity: .55; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrapper-hint { animation: none; opacity: 0.85; }
+}
+
+.wrapper-tap-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  z-index: 22;
+  display: none;
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--c-brass-light);
+  background: linear-gradient(135deg, var(--c-brass-light), var(--c-brass));
+  color: var(--c-stage-black);
+  cursor: pointer;
+}
+
+/* Se muestra un botón de "revelar" explícito cuando el usuario prefiere
+   movimiento reducido, para no depender del gesto de scratch a medias */
+.reduced-motion .wrapper-tap-btn {
+  display: block;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Utilidades                                                              */
+/* ---------------------------------------------------------------------- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}

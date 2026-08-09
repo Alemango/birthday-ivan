@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#15120f">
+<title>Iván 30s</title>
+<meta name="description" content="Recuerdos de cumpleaños número 30.">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ==================================================================
+       Viewer principal: aquí se inyecta la foto / video / carrusel activo
+       ================================================================== -->
+  <main id="viewer" aria-live="polite"></main>
+
+  <!-- Botón flotante "otro recuerdo" con forma de púa -->
+  <button id="reshuffle-btn" class="pick-btn" type="button" aria-label="Ver otro recuerdo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="23 4 23 10 17 10"></polyline>
+      <polyline points="1 20 1 14 7 14"></polyline>
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+    </svg>
+  </button>
+
+  <!-- Botones flotantes de redes sociales (URLs en js/config.js) -->
+  <nav id="social-bar" class="social-bar" aria-label="Redes sociales"></nav>
+
+  <!-- Placa inferior tipo trofeo latón -->
+  <footer class="plate">
+    <p class="plate-label">RECUERDO N.º <span id="plate-number" class="plate-number">001</span></p>
+  </footer>
+
+  <!-- ==================================================================
+       Overlay de primera visita: envoltorio "empañado" tipo scratch card
+       ================================================================== -->
+  <div id="wrapper-overlay">
+    <img id="wrapper-image" src="media/placeholders/wrapper.svg" alt="">
+    <canvas id="wrapper-canvas"></canvas>
+    <p class="wrapper-hint">Desliza el dedo para destapar tu recuerdo</p>
+    <button id="wrapper-tap-btn" class="wrapper-tap-btn" type="button">Revelar recuerdo</button>
+  </div>
+
+</div>
+
+<!-- Audio para fotos con sonido opcional (controlado por gesto directo) -->
+<audio id="memory-audio" preload="none"></audio>
+
+<!-- Datos y configuración: lo único que el usuario necesita editar -->
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
