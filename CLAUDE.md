@@ -163,6 +163,12 @@ gesture-initiated (a tap on the play button); never wire up autoplay here.
   `app.js` (`instagram`, `spotify`, `whatsapp`, `tiktok`, `youtube`, `x`).
   An unrecognized icon name doesn't error — it silently falls back to a
   generic link glyph.
+- `WRAPPER.image` (in `config.js`) is also **not read anywhere** —
+  `initWrapper()` in `app.js` reads the `<img id="wrapper-image">` element
+  directly and never touches `cfg.image`. The actual scratch-card image is
+  the hardcoded `src` on that tag in `index.html`. Same failure mode as
+  `plateLabel` above: changing the wrapper image means editing `index.html`,
+  not just `config.js`.
 
 ## Content ingestion via CSV
 

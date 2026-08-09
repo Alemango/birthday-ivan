@@ -44,7 +44,7 @@ window.GENERIC_CAPTIONS = [];
  * se anima automáticamente el resto para que desaparezca.
  * ---------------------------------------------------------------------- */
 window.WRAPPER = {
-  image: 'media/placeholders/wrapper.svg',
+  image: 'media/placeholders/wrapper.jpg',
   bgColor: '#2a1a10',
   revealThreshold: 0.68,
   brushRadius: 34,
